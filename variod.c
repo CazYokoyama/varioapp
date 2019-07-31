@@ -83,7 +83,7 @@ void INThandler(int sig)
     
 static void wait_for_XCSoar(int xcsoar_sock, sockaddr* s_xcsoar){
 	while (connect(xcsoar_sock, s_xcsoar, sizeof(*s_xcsoar)) < 0) {
-		fprintf(stderr, "failed to connect, trying again\n");
+		fprintf(stderr, "failed to connect to XCSoar: %d, trying again\n", errno);
 		fflush(stdout);
 		sleep(1);
 	}
@@ -131,6 +131,7 @@ void print_runtime_config(t_vario_config *vario_config)
 int main(int argc, char *argv[])
 {
 	int listenfd = 0;
+	int ret = 0;
 
 	// socket communication
 	int xcsoar_sock;
@@ -189,10 +190,10 @@ int main(int argc, char *argv[])
 	fcntl(listenfd, F_SETFD, nFlags);
 
 	//Bind listening socket
-	if( bind(listenfd,(struct sockaddr *)&server , sizeof(server)) < 0)
-	{
+	ret = bind(listenfd,(struct sockaddr *)&server , sizeof(server));
+	if (ret < 0) {
 		//print the error message
-		printf("bind failed. Error");
+		printf("bind failed. Error: %s\n", strerror(errno));
 		return 1;
 	}
 	
