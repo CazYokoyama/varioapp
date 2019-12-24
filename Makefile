@@ -1,8 +1,10 @@
 # Makefile for sensord
-#Some compiler stuff and flags
+CXX = g++-8
+
+# Some compiler stuff and flags
 CFLAGS += -g -Wall
 EXECUTABLE = variod
-_OBJ = audiovario.o variod.o cmdline_parser.o configfile_parser.o nmea_parser.o stf.o 
+_OBJ = audiovario.o variod.o cmdline_parser.o configfile_parser.o nmea_parser.o stf.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 OBJ_CAL = $(patsubst %,$(ODIR)/%,$(_OBJ_CAL))
 LIBS = -lasound -lm -lpthread
@@ -16,19 +18,19 @@ $(ODIR)/%.o: %.c
 	$(CXX) -c -o $@ $< $(CFLAGS)
 
 all: variod
-	
-doc: 
+
+doc:
 	@echo Running doxygen to create documentation
 	doxygen
-	
+
 variod: $(OBJ)
-	$(CXX) $(LIBS) -g -o $@ $^
-	
+	$(CXX) -g -o $@ $^ $(LIBS)
+
 install: variod
 	install -D variod $(BINDIR)/$(EXECUTABLE)
-	
+
 clean:
 	rm -f $(ODIR)/*.o *~ core $(EXECUTABLE)
 	rm -fr doc
 
-.PHONY: clean all doc	
+.PHONY: clean all doc
