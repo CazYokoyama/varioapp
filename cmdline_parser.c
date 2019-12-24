@@ -36,7 +36,7 @@ void cmdline_parser(int argc, char **argv){
 
 	// locale variables
 	int c;
-	char config_filename[50];
+	char config_filename[50] = "/opt/conf/variod.conf";
 	
 	const char* Usage = "\n"\
     "  -v              print version information\n"\

@@ -9,7 +9,9 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 OBJ_CAL = $(patsubst %,$(ODIR)/%,$(_OBJ_CAL))
 LIBS = -lasound -lm -lpthread
 ODIR = obj
-BINDIR = /opt/bin/
+BINDIR = /opt/bin
+CONFDIR = /opt/conf
+systemd_unitdir = /lib/systemd/system
 
 #targets
 
@@ -26,8 +28,16 @@ doc:
 variod: $(OBJ)
 	$(CXX) -g -o $@ $^ $(LIBS)
 
-install: variod
-	install -D variod $(BINDIR)/$(EXECUTABLE)
+install: variod variod.conf
+	install -d $(BINDIR) $(CONFDIR)
+	install $(EXECUTABLE) $(BINDIR)
+	install variod.conf $(CONFDIR)
+	install -d $(systemd_unitdir)
+	install -m 0644 variod.service $(systemd_unitdir)
+
+uninstall:
+	$(RM) -f $(BINDIR)/$(EXECUTABLE) $(CONFDIR)/variod.conf \
+		$(systemd_unitdir)/variod.service
 
 clean:
 	rm -f $(ODIR)/*.o *~ core $(EXECUTABLE)
